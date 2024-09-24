@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-data class Task(val name: String, val description: String, var isCompleted: Boolean = false)
+data class Task(val name: String, val description: String, var isCompleted: Boolean = false, val emoji: String)
 
 @Composable
 fun TaskCompletionTracker() {
@@ -67,7 +68,7 @@ fun TaskCompletionTracker() {
                 Button(
                     onClick = {
                         if (taskName.isNotBlank() && taskDescription.isNotBlank()) {
-                            taskList = taskList + Task(taskName, taskDescription)
+                            taskList = taskList + Task(taskName, taskDescription, emoji = "❌")
                             taskName = ""
                             taskDescription = ""
                         }
@@ -125,13 +126,21 @@ fun TaskBox(task: Task, onTaskChecked: (Boolean) -> Unit) {
                 onCheckedChange = onTaskChecked
             )
             Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = if (!task.isCompleted) task.emoji else "✅",
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Text(
                     text = task.name,
                     style = MaterialTheme.typography.bodyLarge.copy(
                         textDecoration = if (task.isCompleted) TextDecoration.LineThrough else TextDecoration.None
                     ),
-                    color = if (task.isCompleted) Color.Gray else Color.Black
+                    color = if (task.isCompleted) Color.Gray else Color.Black,
+                    fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = task.description,
